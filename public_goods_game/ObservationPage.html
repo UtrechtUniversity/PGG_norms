@@ -1,0 +1,114 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block custom_styles %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+    body { font-family: 'Montserrat', sans-serif; background-color: #f7f7f7; color: #333; }
+    .container { max-width: 900px; margin: 40px auto; }
+    h1 { color: #2c3e50; text-align: center; margin-bottom: 2rem; font-size: 2.5rem; }
+    .card { box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 8px; margin-bottom: 2rem; }
+    .card-header { background-color: #2980b9; color: #fff; font-size: 1.3rem; font-weight: bold; border-bottom: none; }
+    .card-body { background-color: #fff; padding: 1.5rem; }
+    .table th { background-color: #3498db; color: white; font-weight: bold; }
+    .table td { background-color: #fff; color: #555; font-weight: 500; }
+    .table tbody tr:hover { background-color: #daeaf6; }
+
+    /* Row background for evaluation */
+    .approved-bg { background-color: #d4efdf !important; }    /* light green */
+    .disapproved-bg { background-color: #f5b7b1 !important; } /* light red */
+
+    .next-button-container { text-align: center; margin-top: 2rem; }
+    .next-button-container .btn { background-color: #2980b9; color: white; border: none; padding: 0.75rem 3rem; border-radius: 20px; font-weight: bold; font-size: 1.1rem; }
+
+    .emoji { display: inline-block; transition: transform 0.2s ease; }
+    .emoji:hover { transform: scale(1.2); }
+    .approved { color: #27ae60; text-shadow: 0 0 8px rgba(46,204,113,0.6); }
+    .disapproved { color: #c0392b; text-shadow: 0 0 8px rgba(231,76,60,0.6); }
+    .feedback-message { font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem; }
+    .feedback-message.approved { color: #27ae60; }
+    .feedback-message.disapproved { color: #c0392b; }
+    .average-row td {
+    font-style: italic;
+    background-color: #f1f1f1;
+    font-weight: bold;
+    border-top: 3px solid #2980b9;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <h1><i class="fa fa-eye fa-icon"></i> Observation Page</h1>
+    </div>
+
+    {% for round_info in table_data %}
+    <div class="card mt-4 shadow">
+        <h2 class="card-header">Player Data - Round {{ round_info.round_number }}</h2>
+        <div class="card-body">
+            <table class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-user fa-icon"></i> Player</th>
+                        <th><i class="fa fa-hand-holding-usd fa-icon"></i> Public Investment</th>
+                        <th><i class="fa fa-sitemap fa-icon"></i> Private Investment</th>
+                        <th><i class="fa fa-dollar-sign fa-icon"></i> Payoff</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player_data in round_info.round_data %}
+                    <tr
+                        {% if forloop.counter == player_id and show_feedback %}
+                            class="{% if player_data.evaluation == 'approved' %}approved-bg{% else %}disapproved-bg{% endif %}"
+                        {% endif %}
+                    >
+                        <td>
+                            {% if forloop.counter == player_id %}
+                                <strong>YOU</strong>
+                            {% else %}
+                                Player #{{ forloop.counter }}
+                            {% endif %}
+                        </td>
+                        <td>{{ player_data.public }}</td>
+                        <td>{{ player_data.private }}</td>
+                        <td>{{ player_data.total }}</td>
+                    </tr>
+                    {% endfor %}
+
+                    <!-- Average row -->
+                    <tr class="average-row">
+                        <td>Average</td>
+                        <td>{{ round_info.group_avg.public }}</td>
+                        <td>{{ round_info.group_avg.private }}</td>
+                        <td>{{ round_info.group_avg.total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {% if show_feedback %}
+                {% for player_data in round_info.round_data %}
+                    {% if forloop.counter == player_id %}
+                        <div class="text-center mt-2">
+                            {% if player_data.evaluation == 'approved' %}
+                                <span class="emoji approved" style="font-size:48px;">😊</span>
+                                <p class="feedback-message approved">Great job! You contributed at or above the group average.</p>
+                            {% else %}
+                                <span class="emoji disapproved" style="font-size:48px;">☹️</span>
+                                <p class="feedback-message disapproved">You contributed less than the group average.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="next-button-container">
+        {{ next_button }}
+    </div>
+</div>
+{% endblock %}

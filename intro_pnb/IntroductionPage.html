@@ -1,0 +1,178 @@
+
+{% load otree static %}
+
+{% block custom_styles %}
+<style>
+    /* Font Import */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+    /* Page Styles */
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f7f9fc;
+        color: #424242;
+        line-height: 1.6;
+    }
+
+    .experiment-container {
+        max-width: 900px;
+        margin: 3% auto;
+        padding: 2% 4%;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .header {
+        background-color: #2c3e50;
+        color: #fff;
+        padding: 30px;
+        text-align: center;
+        border-radius: 15px 15px 0 0;
+        margin: -2% -4% 4% -4%;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .introduction,
+    .overview,
+    .stages {
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 30px;
+        margin-bottom: 30px;
+    }
+
+    .stages ol li {
+        counter-increment: list-counter;
+        padding-bottom: 15px;
+        position: relative;
+    }
+
+    .encouragement {
+        font-size: 1rem;
+        padding: 20px;
+        background-color: #e8f4fd;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .btn-primary {
+        font-size: 1rem;
+        color: #fff;
+        background-color: #4a86e8;
+        border: none;
+        border-radius: 30px;
+        padding: 15px 30px;
+        font-weight: 600;
+        display: inline-block;
+        transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #3a72bb;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .next-button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .icon-text {
+        margin-right: 0.5rem;
+    }
+
+    .stages-header {
+        margin-bottom: 1rem;
+    }
+
+    .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="experiment-container">
+    <div class="header">
+        <h1><i class="fas fa-users icon-text"></i> {{ C.title }}</h1>
+    </div>
+
+    <div class="section introduction">
+        <h2><i class="fas fa-rocket icon-text"></i>Introduction</h2>
+
+        <p>Welcome to this game! Thank you for participating. Please read these instructions carefully.
+            You will receive a fixed amount of X euros for your participation, but you can earn more depending
+            on your choices during the game. During the game, points will be used, which will later be converted into euros (X points = 1 euro). At the end of the game, you will be paid as soon as possible.
+            Your final amount will be rounded to the nearest half euro.
+        </p>
+    </div>
+
+    <div class="section overview">
+        <h2><i class="fas fa-binoculars icon-text"></i>Game Overview</h2>
+        <p>This is an economic game. The game consists of 20 rounds. You will play with a group of
+            6 people, including yourself.
+            Each round you will play with the same players. Your identities will remain anonymous.</p>
+
+        <p>Each game round consists of two phases. In the first phase, you decide how much to contribute to a fund (a common account). In the second phase, you will see an overview of the choices and earnings of all group members.</p>
+    </div>
+
+    <div class="section stages">
+       <h2 class="stages-header"><i class="fas fa-tasks icon-text"></i>Phases per Game Round</h2>
+        <ol>
+            <li>
+                <strong>Phase 1:</strong> <i>Contributing to the Fund</i>
+                <p>At the beginning of each round, your group members and you each receive {{ C.endowment }} points. You decide how many of these points you want to contribute to a fund, whose proceeds are distributed among all group members.
+                    The remaining points you keep for yourself.</p>
+
+                <p>For each point contributed to the fund, everyone receives {{C.efficiency_factor}} points, regardless of their own contribution. For each point that players keep for themselves, only they receive 1 point.</p>
+
+                <p>The earnings of you and your fellow players per round are therefore:</p>
+
+                <p style="text-align: center; font-style: italic; font-weight: bold;">
+                    1 x (20 - own contribution to the fund) + {{ C.efficiency_factor }} x (group contribution to the fund)
+                </p>
+
+                 <p>The players' earnings are thus maximized when everyone contributes the full amount of {{C.endowment}} points to the fund.</p>
+
+            </li>
+            <li>
+
+                <strong>Phase 2:</strong> <i>Group Overview</i>
+                <p>After all group members have decided how much to contribute to the fund,
+                    you will see the choices and earnings of your group members, and they will see yours.</p>
+            </li>
+        </ol>
+
+
+    <div class="section introduction">
+        <h2 class="stages-header"><i class="fas fa-clock"></i> Time per Round</h2>
+        <p>In each round, you will have X seconds to enter your contribution to the fund, followed by X seconds to view the group's choices and earnings.
+            So pay close attention! If you do not act within this time, the game will end for you!</p>
+    </div>
+
+    <div class="encouragement">
+        <p>If you have carefully read the instructions, you can start the game by clicking 'Next'.</p>
+        <!--<p><i class="fas fa-heart icon-text"></i>Your role in the game is ...</p>-->
+        <div class="next-button-container">
+            <button class="btn-primary">Next</button>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

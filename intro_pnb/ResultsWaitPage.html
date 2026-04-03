@@ -1,0 +1,46 @@
+{{ extends 'otree/WaitPage.html' }}
+
+{% block title %}{{ title_text }}{% endblock %}
+
+{% block content %}
+    {{ body_text }}
+
+    <p></p>
+
+    <div style="width: 100%; background: #e0e0e0; height: 18px; border-radius: 4px; overflow: hidden; margin-top: 12px;">
+        <div style="
+            width: {{ percent }}%;
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.5s ease;
+        "></div>
+    </div>
+
+    <p style="margin-top: 6px; font-style: italic; color: gray;">
+        Players arrived: {{ percent }}%
+    </p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let seconds = 10;
+    const countdownEl = document.createElement('span');
+    countdownEl.textContent = seconds;
+    const msg = document.createElement('p');
+    msg.style.fontStyle = "italic";
+    msg.style.color = "gray";
+    msg.textContent = "Refreshing in ";
+    msg.appendChild(countdownEl);
+    msg.appendChild(document.createTextNode(" seconds…"));
+    document.body.appendChild(msg);
+
+    const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(countdownInterval);
+            window.location.reload();
+        }
+    }, 1000);
+</script>
+{% endblock %}
