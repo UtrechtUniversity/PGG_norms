@@ -9,7 +9,7 @@ personal normative beliefs
 from settings import (
     players_per_group as ppp,
     efficiency_factor as ef,
-    num_rounds as nr
+    num_rounds as nr,
 )
 
 class C(BaseConstants):
@@ -54,6 +54,14 @@ class IntroductionPage(Page):
         participant_label = player.participant.label
         player.prolific_id = participant_label
 
+    def vars_for_template(player):
+        return {
+            'endowment': C.endowment,
+            'efficiency_factor': C.efficiency_factor,
+            'players_per_group': ppp,
+            'rounds': nr
+        }
+
 
 class PNB(Page):
     form_model = 'player'
@@ -92,7 +100,8 @@ class ResultsWaitPage(WaitPage):
 
         # determine group size and how many are needed
         group_size = ppp
-        total_needed = group_size
+        #total_needed = group_size
+        total_needed = len(player.session.get_participants()) #all participations in the session...
 
         if total_needed == 0:
             percent = 0

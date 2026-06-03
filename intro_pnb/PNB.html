@@ -41,7 +41,7 @@
     </div>
 
    <p class="page-intro">
-    Down below you see an example of a 6-player group. You can change each player's contribution decision
+    Down below you see an example of a {{players_per_group}}-player group. You can change each player's contribution decision
     to the public fund using the sliders and see how this affects their own and others' payoffs.
     Play around with the sliders to explore the effects of different contribution decisions!
 </p>
@@ -76,10 +76,19 @@
 
         </div>
     </div>
+    <div class="card mt-4 shadow">
+    <div class="card-body">
+        <p>
+            <strong>
+                According to you, what is the appropriate amount that members
+                should contribute to the group account?
+            </strong>
+        </p>
 
-    <p><strong>According to you, what is the appropriate amount that members should contribute to the group account?</strong></p>
-    <div class="mgslider-wrapper" id="pnb_slider_container"></div>
-    <input type="hidden" name="pnb" id="pnb_input">
+        <div class="mgslider-wrapper" id="pnb_slider_container"></div>
+        <input type="hidden" name="pnb" id="pnb_input">
+    </div>
+</div>
 
     <div class="next-button-container">
         {{ next_button }}
