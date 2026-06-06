@@ -8,18 +8,21 @@ Public goods game with descriptive/injunctive norm feedback
 from settings import (
     players_per_group as ppp,
     efficiency_factor as ef,
-    num_rounds as nr
+    num_rounds as nr,
 )
-
 
 class Constants(BaseConstants):
     name_in_url = "public_goods_game"
     players_per_group = ppp
     num_rounds = nr
     num_recent_rounds_to_display = 1
-    efficiency_factor = ef
-    endowment = 20
 
+    endowment = 20
+    # linear game
+    efficiency_factor = ef
+    # stepwise game
+    threshold = 40
+    reward = 30
 
 class Subsession(BaseSubsession):
     pass
@@ -29,15 +32,25 @@ class Group(BaseGroup):
     total_group_investment = models.CurrencyField(initial=0)
     show_feedback = models.BooleanField(initial=True)  # group-level stimulus
 
-    def set_first_stage_earnings(self):
+    def set_payoffs(self, regime):
         players = self.get_players()
         self.total_group_investment = sum(p.public_investment for p in players)
 
         for p in players:
             p.payoff_from_private = Constants.endowment - p.public_investment
-            p.payoff_from_public = Constants.efficiency_factor * self.total_group_investment
-            p.gross_profit = p.payoff_from_private + p.payoff_from_public
 
+            if regime == "linear":
+                p.payoff_from_public = Constants.efficiency_factor * self.total_group_investment
+
+            elif regime == "stepwise":
+                threshold_met = self.total_group_investment >= Constants.threshold
+                p.payoff_from_public = Constants.reward if threshold_met else 0
+
+            else:
+                raise ValueError("Unknown regime")
+
+            p.gross_profit = p.payoff_from_private + p.payoff_from_public
+            p.participant.payoff = p.gross_profit
 
 class Player(BasePlayer):
     payoff_from_private = models.CurrencyField()
@@ -149,12 +162,27 @@ class Contribution(Page):
             endowment=Constants.endowment,
         )
 
-
 class GroupWaitPage(WaitPage):
     @staticmethod
     def after_all_players_arrive(group: Group):
-        group.set_first_stage_earnings()
+        """
+        depending on condition and round, determine payoff function (linear/stepwise)
+        """
+        subsession = group.subsession
+        session = subsession.session
+        round_number = subsession.round_number
+        mid = Constants.num_rounds // 2
 
+        first = session.config["public_goods_first"]
+
+        if first == "linear":
+            regime = "linear" if round_number <= mid else "stepwise"
+        elif first == "stepwise":
+            regime = "stepwise" if round_number <= mid else "linear"
+        else:
+            raise ValueError("Invalid config")
+
+        group.set_payoffs(regime)
 
 class ObservationPage(Page):
     def vars_for_template(self):
@@ -211,6 +239,27 @@ class ObservationPage(Page):
             average = avg_public
         )
 
+class SecondGame(Page):
+    def is_displayed(self):
+        mid = Constants.num_rounds // 2
+        return self.round_number == mid + 1
+
+    def vars_for_template(self):
+        session = self.session
+        first = session.config["public_goods_first"]
+
+        if first == "linear":
+            from_phase = "linear"
+            to_phase = "stepwise"
+        else:
+            from_phase = "stepwise"
+            to_phase = "linear"
+
+        return dict(
+            from_phase=from_phase,
+            to_phase=to_phase,
+        )
+
 
 class FinalGameResults(Page):
     def is_displayed(self):
@@ -226,5 +275,6 @@ page_sequence = [
     Contribution,
     GroupWaitPage,
     ObservationPage,
+    SecondGame,
     FinalGameResults,
 ]

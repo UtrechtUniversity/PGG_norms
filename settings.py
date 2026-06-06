@@ -15,12 +15,16 @@ SESSION_CONFIGS = [
         display_name="PNB heterogeneous",
         condition="heterogeneous",
         num_demo_participants=6,
-        app_sequence=["consent", "intro_pnb", "public_goods_game", "reward"],
+        public_goods_first = "linear",
+        #public_goods_first="stepwise",
+        app_sequence=[#"consent",
+             "intro_pnb", "public_goods_game", "reward"],
         completionlink='https://app.prolific.com/submissions/complete?cc=TEST'
     )
 ]
 
 # set some central parameters to be used across apps:
+
 players_per_group = 3
 efficiency_factor = 0.7
 num_rounds = 3

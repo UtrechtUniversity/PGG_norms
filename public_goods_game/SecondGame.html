@@ -1,0 +1,17 @@
+{% extends "global/Page.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<h3>Game Update</h3>
+
+<p>You are now moving from <strong>{{ from_phase }}</strong> to <strong>{{ to_phase }}</strong>.</p>
+
+<p>Please continue to the next round.</p>
+
+<button class="otree-btn-next btn btn-primary">
+    Continue
+</button>
+
+{% endblock %}
