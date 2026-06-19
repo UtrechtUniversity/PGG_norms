@@ -6,6 +6,7 @@ SESSION_CONFIGS = [
         display_name="PNB homogeneous",
         condition="homogeneous",
         num_demo_participants=6,
+        public_goods_first="linear",
         app_sequence=["consent", "intro_pnb", "public_goods_game", "reward"],
         completionlink='https://app.prolific.com/submissions/complete?cc=TEST'
     ),
@@ -17,7 +18,7 @@ SESSION_CONFIGS = [
         num_demo_participants=6,
         public_goods_first = "linear",
         #public_goods_first="stepwise",
-        app_sequence=[#"consent",
+        app_sequence=["consent",
              "intro_pnb", "public_goods_game", "reward"],
         completionlink='https://app.prolific.com/submissions/complete?cc=TEST'
     )
