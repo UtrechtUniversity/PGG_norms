@@ -36,7 +36,6 @@ class Player(BasePlayer):
         max=C.endowment,
         initial=None,
         verbose_name="According to you, what is the appropriate amount that each member should contribute to the group account?",
-        # Specify to use a slider widget
         widget=widgets.RadioSelect,
         choices=[i for i in range(0, C.endowment + 1)],
     )
