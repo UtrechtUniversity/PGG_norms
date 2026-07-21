@@ -1,0 +1,446 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block custom_styles %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+    }
+
+    .card {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background-color: #2980b9;
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-bottom: none;
+    }
+
+    .card-body {
+        background-color: #fff;
+        padding: 1.5rem;
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .table td {
+        background-color: #fff;
+        color: #555;
+        font-weight: 500;
+        text-align: center;
+        padding: 8px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #daeaf6;
+    }
+
+    .average-row td {
+        font-style: italic;
+        background-color: #f1f1f1;
+        font-weight: bold;
+        border-top: 3px solid #2980b9;
+    }
+
+    .threshold-status {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .threshold-not-met {
+        color: #842029;
+        background-color: #f8d7da;
+        border: 1px solid #f5c2c7;
+    }
+
+    .threshold-met {
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border: 1px solid #badbcc;
+    }
+
+    .next-button-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .next-button-container .btn {
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        padding: 0.75rem 3rem;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .sim-slider-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .sim-slider {
+        width: 80%;
+    }
+
+    .slider-value {
+        width: 20%;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .mgslider-wrapper {
+        margin-top: 30px;
+        max-width: 500px;
+    }
+
+    .page-intro {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="text-center my-4">
+        <h1>
+            <i class="far fa-edit"></i>
+            Personal Normative Beliefs
+        </h1>
+    </div>
+
+    <p class="page-intro">
+        Below you see an example of a
+        {{ players_per_group }}-player game.
+        You can change each player's contribution to the group account
+        using the sliders and see how this affects their own and the
+        other group members' payoffs.
+    </p>
+
+    <p class="page-intro">
+        If the group contributes at least
+        <strong>{{ threshold }}</strong> points in total, every group
+        member receives a reward of <strong>{{ reward }}</strong>
+        points. If the threshold is not reached, no group member
+        receives this reward.
+    </p>
+
+    <p class="page-intro">
+        Play around with the sliders to explore the effects of different
+        contribution decisions. Then answer the question below.
+    </p>
+
+    <div class="card mt-4 shadow">
+
+        <h2 class="card-header">
+            Example game
+        </h2>
+
+        <div class="card-body">
+
+            <table
+                class="table table-hover table-striped table-bordered"
+                id="pgg-table"
+            >
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Player</th>
+                        <th style="width: 30%;">Public contribution</th>
+                        <th style="width: 25%;">Private account</th>
+                        <th style="width: 25%;">Payoff</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+                <tfoot>
+                    <tr class="average-row">
+                        <td>Average</td>
+                        <td id="avg-public">0.00</td>
+                        <td id="avg-private">{{ endowment }}.00</td>
+                        <td id="avg-total">{{ endowment }}.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div
+                id="threshold-status"
+                class="threshold-status threshold-not-met"
+            >
+                Threshold not reached:
+                <span id="total-contribution">0</span>
+                of {{ threshold }} points contributed
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow">
+        <div class="card-body">
+
+            <p>
+                <strong>
+                    According to you, what is the appropriate amount
+                    that each member should contribute to the group account?
+                </strong>
+            </p>
+
+            <div
+                class="mgslider-wrapper"
+                id="pnb_slider_container"
+            ></div>
+
+            <input
+                type="hidden"
+                name="pnb_stepwise"
+                id="pnb_stepwise_input"
+            >
+
+        </div>
+    </div>
+
+    <div class="next-button-container">
+        {{ next_button }}
+    </div>
+
+</div>
+
+
+<script src="{{ static 'mgslider.js' }}"></script>
+
+<script>
+$(document).ready(function () {
+
+    const numberOfPlayers = {{ players_per_group }};
+    const endowment = {{ endowment }};
+    const threshold = {{ threshold }};
+    const reward = {{ reward }};
+
+    const tbody = $("#pgg-table tbody");
+    const contributions = Array(numberOfPlayers).fill(0);
+
+    for (let i = 0; i < numberOfPlayers; i++) {
+
+        const row = $(`
+            <tr>
+                <td>Player #${i + 1}</td>
+
+                <td>
+                    <div class="sim-slider-container">
+                        <input
+                            type="range"
+                            min="0"
+                            max="${endowment}"
+                            value="0"
+                            class="sim-slider"
+                        >
+                        <span class="slider-value">0</span>
+                    </div>
+                </td>
+
+                <td class="private-cell">
+                    ${endowment}
+                </td>
+
+                <td class="payoff-cell">
+                    ${endowment.toFixed(2)}
+                </td>
+            </tr>
+        `);
+
+        tbody.append(row);
+    }
+
+
+    function recalc() {
+
+        let totalContribution = 0;
+
+        $(".sim-slider").each(function (i) {
+
+            const contribution = parseInt($(this).val());
+
+            contributions[i] = contribution;
+            totalContribution += contribution;
+
+            $(this)
+                .next(".slider-value")
+                .text(contribution);
+
+            const privateAccount =
+                endowment - contribution;
+
+            $(this)
+                .closest("tr")
+                .find(".private-cell")
+                .text(privateAccount.toFixed(2));
+        });
+
+
+        const thresholdMet =
+            totalContribution >= threshold;
+
+        const publicReward =
+            thresholdMet ? reward : 0;
+
+
+        $(".payoff-cell").each(function (i) {
+
+            const payoff =
+                (endowment - contributions[i])
+                + publicReward;
+
+            $(this).text(payoff.toFixed(2));
+        });
+
+
+        const averageContribution =
+            totalContribution / numberOfPlayers;
+
+        const averagePrivate =
+            endowment - averageContribution;
+
+        const averagePayoff =
+            averagePrivate + publicReward;
+
+
+        $("#avg-public").text(
+            averageContribution.toFixed(2)
+        );
+
+        $("#avg-private").text(
+            averagePrivate.toFixed(2)
+        );
+
+        $("#avg-total").text(
+            averagePayoff.toFixed(2)
+        );
+
+
+        $("#total-contribution").text(
+            totalContribution
+        );
+
+        const statusBox =
+            $("#threshold-status");
+
+        if (thresholdMet) {
+
+            statusBox
+                .removeClass("threshold-not-met")
+                .addClass("threshold-met")
+                .html(
+                    `Threshold reached:
+                    ${totalContribution}/${threshold} points contributed`
+                );
+
+        } else {
+
+            statusBox
+                .removeClass("threshold-met")
+                .addClass("threshold-not-met")
+                .html(
+                    `Threshold not reached:
+                    ${totalContribution}/${threshold} points contributed`
+                );
+        }
+    }
+
+
+    recalc();
+
+    $(".sim-slider").on(
+        "input",
+        recalc
+    );
+
+
+    let slider = new mgslider(
+        "pnb_stepwise",
+        0,
+        endowment,
+        1
+    );
+
+    slider.yourvalue =
+        "Appropriate contribution";
+
+    slider.print(
+        document.getElementById(
+            "pnb_slider_container"
+        )
+    );
+
+    slider.callback = function (value) {
+        $("#pnb_stepwise_input").val(value);
+    };
+
+
+    const nextBtn =
+        document.querySelector(
+            "button.otree-btn-next"
+        );
+
+    if (nextBtn) {
+
+        nextBtn.addEventListener(
+            "click",
+            function (event) {
+
+                const confirmed = confirm(
+                    "Are you sure you want to submit your answer?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            }
+        );
+    }
+
+});
+</script>
+
+{% endblock %}

@@ -23,24 +23,8 @@
 
 {% block scripts %}
 <script>
-    let seconds = 10;
-    const countdownEl = document.createElement('span');
-    countdownEl.textContent = seconds;
-    const msg = document.createElement('p');
-    msg.style.fontStyle = "italic";
-    msg.style.color = "gray";
-    msg.textContent = "Refreshing in ";
-    msg.appendChild(countdownEl);
-    msg.appendChild(document.createTextNode(" seconds…"));
-    document.body.appendChild(msg);
-
-    const countdownInterval = setInterval(() => {
-        seconds--;
-        countdownEl.textContent = seconds;
-        if (seconds <= 0) {
-            clearInterval(countdownInterval);
-            window.location.reload();
-        }
-    }, 1000);
+    setTimeout(function () {
+        window.location.reload();
+    }, 10000);
 </script>
 {% endblock %}

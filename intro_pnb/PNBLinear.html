@@ -86,7 +86,7 @@
         </p>
 
         <div class="mgslider-wrapper" id="pnb_slider_container"></div>
-        <input type="hidden" name="pnb" id="pnb_input">
+        <input type="hidden" name="pnb_linear" id="pnb_linear_input">
     </div>
 </div>
 
@@ -145,12 +145,12 @@ $(document).ready(function(){
     recalc();
     $(".sim-slider").on("input", recalc);
 
-    let slider = new mgslider("pnb", 0, {{ endowment }}, 1);
+    let slider = new mgslider("pnb_linear", 0, {{ endowment }}, 1);
     slider.yourvalue = "Appropriate contribution";
     slider.print(document.getElementById("pnb_slider_container"));
 
     slider.callback = function(value){
-        $("#pnb_input").val(value);
+        $("#pnb_linear_input").val(value);
     };
 
     const nextBtn = document.querySelector('button.otree-btn-next');
