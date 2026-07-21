@@ -1,34 +1,128 @@
 from os import environ
 
 SESSION_CONFIGS = [
+
+
+# Test
     dict(
-        name="public_goods_game1",
-        display_name="PNB homogeneous",
-        condition="homogeneous",
-        num_demo_participants=6,
+        name="test",
+        display_name="test 9",
+        num_demo_participants=9,
         public_goods_first="linear",
-        app_sequence=["consent", "intro_pnb", "public_goods_game", "reward"],
-        completionlink='https://app.prolific.com/submissions/complete?cc=TEST'
+        composition_first="homogeneous",
+        use_browser_bots=False,
+        app_sequence=[
+            # "consent",
+            "intro_pnb",
+            "public_goods_game_1",
+            "public_goods_game_2",
+            #"reward",
+        ],
+        completionlink=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=TEST"
+        ),
     ),
 
+    # Arm A:
+    # Linear → stepwise
+    # Homogeneous → heterogeneous
     dict(
-        name="public_goods_game2",
-        display_name="PNB heterogeneous",
-        condition="heterogeneous",
-        num_demo_participants=6,
-        public_goods_first = "linear",
-        #public_goods_first="stepwise",
-        app_sequence=["consent",
-             "intro_pnb", "public_goods_game", "reward"],
-        completionlink='https://app.prolific.com/submissions/complete?cc=TEST'
-    )
-]
+        name="pgg_linear_homogeneous_first",
+        display_name="Linear first – homogeneous first",
+        num_demo_participants=72,
+        public_goods_first="linear",
+        composition_first="homogeneous",
+        use_browser_bots=True,
+        app_sequence=[
+            # "consent",
+            "intro_pnb",
+            "public_goods_game_1",
+            "public_goods_game_2",
+            #"reward",
+        ],
+        completionlink=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=TEST"
+        ),
+    ),
 
+    # Arm B:
+    # Linear → stepwise
+    # Heterogeneous → homogeneous
+    dict(
+        name="pgg_linear_heterogeneous_first",
+        display_name="Linear first – heterogeneous first",
+        num_demo_participants=72,
+        public_goods_first="linear",
+        composition_first="heterogeneous",
+        use_browser_bots=True,
+        app_sequence=[
+            # "consent",
+            "intro_pnb",
+            "public_goods_game_1",
+            "public_goods_game_2",
+            #"reward",
+        ],
+        completionlink=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=TEST"
+        ),
+    ),
+
+    # Arm C:
+    # Stepwise → linear
+    # Homogeneous → heterogeneous
+    dict(
+        name="pgg_stepwise_homogeneous_first",
+        display_name="Stepwise first – homogeneous first",
+        num_demo_participants=72,
+        public_goods_first="stepwise",
+        composition_first="homogeneous",
+        use_browser_bots=True,
+        app_sequence=[
+            # "consent",
+            "intro_pnb",
+            "public_goods_game_1",
+            "public_goods_game_2",
+            #"reward",
+        ],
+        completionlink=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=TEST"
+        ),
+    ),
+
+    # Arm D:
+    # Stepwise → linear
+    # Heterogeneous → homogeneous
+    dict(
+        name="pgg_stepwise_heterogeneous_first",
+        display_name="Stepwise first – heterogeneous first",
+        num_demo_participants=72,
+        public_goods_first="stepwise",
+        composition_first="heterogeneous",
+        use_browser_bots=True,
+        app_sequence=[
+            # "consent",
+            "intro_pnb",
+            "public_goods_game_1",
+            "public_goods_game_2",
+            #"reward",
+        ],
+        completionlink=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=TEST"
+        ),
+    ),
+]
 # set some central parameters to be used across apps:
 
-players_per_group = 3
-efficiency_factor = 0.7
-num_rounds = 3
+players_per_group = 6
+efficiency_factor = .25
+#threshold = 60
+#reward = 15
+num_rounds = 10
 
 #configure a room
 ROOMS = [

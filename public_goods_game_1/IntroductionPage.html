@@ -1,0 +1,466 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+
+{% block custom_styles %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+    }
+
+    .card {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background-color: #2980b9;
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-bottom: none;
+    }
+
+    .card-body {
+        background-color: #fff;
+        padding: 1.5rem;
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+    }
+
+    .table td {
+        background-color: #fff;
+        color: #555;
+        font-weight: 500;
+        text-align: center;
+        padding: 8px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #daeaf6;
+    }
+
+    .average-row td {
+        font-style: italic;
+        background-color: #f1f1f1;
+        font-weight: bold;
+        border-top: 3px solid #2980b9;
+    }
+
+    .next-button-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .next-button-container .btn {
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        padding: 0.75rem 3rem;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .sim-slider-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .sim-slider {
+        width: 80%;
+    }
+
+    .slider-value {
+        width: 20%;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .page-intro {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+    .game-rule {
+        padding: 0.8rem 1rem;
+        margin-bottom: 1.25rem;
+        background-color: #eef6fb;
+        border-left: 4px solid #2980b9;
+        border-radius: 4px;
+    }
+
+    .threshold-status {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .threshold-not-met {
+        color: #842029;
+        background-color: #f8d7da;
+        border: 1px solid #f5c2c7;
+    }
+
+    .threshold-met {
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border: 1px solid #badbcc;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="text-center my-4">
+        <h1>
+            <i class="fas fa-users"></i>
+            Game 1
+        </h1>
+    </div>
+
+    <p class="page-intro">
+        You have been assigned to a group with
+        <strong>{{ other_players }} other participants</strong>.
+        You are about to begin Game 1, which consists of
+        <strong>{{ num_rounds }} rounds</strong>.
+    </p>
+
+    <p class="page-intro">
+        Before you begin, you can briefly review how contributions
+        affect payoffs using the example below.
+    </p>
+
+    {% if regime == "linear" %}
+        <div class="game-rule">
+            You receive <strong>1 point</strong> for every point you keep in your private account.
+            In addition, every group member receives <strong>{{ efficiency_factor }} points</strong> for each point contributed to the group account, regardless of who made the contribution.
+        </div>
+    {% else %}
+
+        <div class="game-rule">
+            You receive <strong>1 point for every point you keep in your private account</strong>.
+            If your group contributes at least
+            <strong>{{ threshold }} points</strong> to the group account in total,
+            every group member receives
+            <strong>{{ reward }} additional points</strong>.
+        </div>
+
+    {% endif %}
+
+
+    <div class="card mt-4 shadow">
+
+        <h2 class="card-header">
+            Example game
+        </h2>
+
+        <div class="card-body">
+
+            <table
+                class="table table-hover table-striped table-bordered"
+                id="pgg-table"
+            >
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">
+                            Player
+                        </th>
+
+                        <th style="width: 30%;">
+                            Public Contribution
+                        </th>
+
+                        <th style="width: 25%;">
+                            Private Contribution
+                        </th>
+
+                        <th style="width: 25%;">
+                            Payoff
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+                <tfoot>
+                    <tr class="average-row">
+                        <td>Average</td>
+                        <td id="avg-public">0.00</td>
+                        <td id="avg-private">
+                            {{ endowment }}
+                        </td>
+                        <td id="avg-total">
+                            {{ endowment }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+
+            {% if regime == "stepwise" %}
+
+                <div
+                    id="threshold-status"
+                    class="threshold-status threshold-not-met"
+                >
+                    Threshold not reached:
+                    <span id="total-contribution">0</span>
+                    of {{ threshold }} points contributed
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+
+
+    <div class="next-button-container">
+        {{ next_button }}
+    </div>
+
+</div>
+
+
+<script>
+$(document).ready(function () {
+
+    const numberOfPlayers =
+        {{ players_per_group }};
+
+    const endowment =
+        {{ endowment }};
+
+    const efficiencyFactor =
+        {{ efficiency_factor }};
+
+    const threshold =
+        {{ threshold }};
+
+    const reward =
+        {{ reward }};
+
+    const regime =
+        "{{ regime }}";
+
+    const tbody =
+        $("#pgg-table tbody");
+
+    const contributions =
+        Array(numberOfPlayers).fill(0);
+
+
+    for (
+        let i = 0;
+        i < numberOfPlayers;
+        i++
+    ) {
+        const row = $(`
+            <tr>
+                <td>
+                    Player #${i + 1}
+                </td>
+
+                <td>
+                    <div class="sim-slider-container">
+                        <input
+                            type="range"
+                            min="0"
+                            max="${endowment}"
+                            value="0"
+                            class="sim-slider"
+                        >
+
+                        <span class="slider-value">
+                            0
+                        </span>
+                    </div>
+                </td>
+
+                <td class="private-cell">
+                    ${endowment.toFixed(2)}
+                </td>
+
+                <td class="payoff-cell">
+                    ${endowment.toFixed(2)}
+                </td>
+            </tr>
+        `);
+
+        tbody.append(row);
+    }
+
+
+    function recalc() {
+
+        let totalContribution = 0;
+
+        $(".sim-slider").each(function (i) {
+
+            const contribution =
+                parseInt($(this).val());
+
+            contributions[i] =
+                contribution;
+
+            totalContribution +=
+                contribution;
+
+            $(this)
+                .next(".slider-value")
+                .text(contribution);
+
+            const privateAccount =
+                endowment - contribution;
+
+            $(this)
+                .closest("tr")
+                .find(".private-cell")
+                .text(
+                    privateAccount.toFixed(2)
+                );
+        });
+
+
+        let publicReturn = 0;
+
+        if (regime === "linear") {
+
+            publicReturn =
+                efficiencyFactor
+                * totalContribution;
+
+        } else {
+
+            const thresholdMet =
+                totalContribution >= threshold;
+
+            publicReturn =
+                thresholdMet ? reward : 0;
+
+            const statusBox =
+                $("#threshold-status");
+
+            if (thresholdMet) {
+
+                statusBox
+                    .removeClass(
+                        "threshold-not-met"
+                    )
+                    .addClass(
+                        "threshold-met"
+                    )
+                    .html(
+                        `Threshold reached:
+                        ${totalContribution}/${threshold} points contributed`
+                    );
+
+            } else {
+
+                statusBox
+                    .removeClass(
+                        "threshold-met"
+                    )
+                    .addClass(
+                        "threshold-not-met"
+                    )
+                    .html(
+                        `Threshold not reached:
+                        ${totalContribution}/${threshold} points contributed`
+                    );
+            }
+        }
+
+
+        $(".payoff-cell").each(function (i) {
+
+            const payoff =
+                (
+                    endowment
+                    - contributions[i]
+                )
+                + publicReturn;
+
+            $(this).text(
+                payoff.toFixed(2)
+            );
+        });
+
+
+        const averageContribution =
+            totalContribution
+            / numberOfPlayers;
+
+        const averagePrivate =
+            endowment
+            - averageContribution;
+
+        const averagePayoff =
+            averagePrivate
+            + publicReturn;
+
+
+        $("#avg-public").text(
+            averageContribution.toFixed(2)
+        );
+
+        $("#avg-private").text(
+            averagePrivate.toFixed(2)
+        );
+
+        $("#avg-total").text(
+            averagePayoff.toFixed(2)
+        );
+    }
+
+
+    recalc();
+
+    $(".sim-slider").on(
+        "input",
+        recalc
+    );
+
+});
+</script>
+
+{% endblock %}
