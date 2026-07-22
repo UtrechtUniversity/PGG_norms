@@ -106,7 +106,6 @@ class OtreeApplication:
                 )
                 return
 
--
         # 4. Continue through the oTree browser-bot pages
   
 
