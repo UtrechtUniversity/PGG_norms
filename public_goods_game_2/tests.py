@@ -73,6 +73,19 @@ class PlayerBot(Bot):
 
     def play_round(self):
 
+        selected_for_game = (
+            self.participant.vars.get(
+                "selected_for_game",
+                False,
+            )
+        )
+
+        # Non-selected participants have already been
+        # redirected from the selection app to reward.
+        # Therefore, this bot must not submit any pages.
+        if selected_for_game is not True:
+            return
+
         if self.player.round_number == 1:
             yield IntroductionPage
 

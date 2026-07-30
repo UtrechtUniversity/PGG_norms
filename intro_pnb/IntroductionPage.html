@@ -1,13 +1,10 @@
-
 {% load otree static %}
 
 {% block custom_styles %}
 <style>
-    /* Font Import */
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
     @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
-    /* Page Styles */
     body {
         font-family: 'Montserrat', sans-serif;
         background-color: #f7f9fc;
@@ -34,47 +31,122 @@
     }
 
     h1 {
+        margin: 0;
         font-size: 2.5rem;
+    }
+
+    h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
     }
 
     p {
         font-size: 1rem;
     }
 
-    .introduction,
-    .overview,
-    .stages {
+    .section {
         border-bottom: 2px solid #e2e8f0;
         padding-bottom: 30px;
         margin-bottom: 30px;
     }
 
-    .stages ol li {
-        counter-increment: list-counter;
-        padding-bottom: 15px;
-        position: relative;
+    .section:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .game-logic {
+        max-width: 870px;
+        margin: 20px auto;
+        padding: 10px 14px 12px;
+        background-color: #f8fafc;
+        border: 1px solid #e1e8ef;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .game-logic svg {
+        display: block;
+        width: 100%;
+        max-width: 590px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 4px;
+        color: #5f6b76;
+        font-size: 0.83rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .legend-line {
+        width: 28px;
+        height: 3px;
+        border-radius: 3px;
+    }
+
+    .contribution-line {
+        background-color: #4a86e8;
+    }
+
+    .return-line {
+        background-color: #43a56f;
+    }
+
+    .earnings-formula {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 9px;
+        padding: 7px 14px;
+        background-color: #fff;
+        border: 1px solid #dce5ed;
+        border-radius: 8px;
+        color: #2c3e50;
+        font-size: 0.86rem;
+    }
+
+    .earnings-formula .equals,
+    .earnings-formula .plus {
+        color: #4a86e8;
+        font-weight: 700;
     }
 
     .encouragement {
-        font-size: 1rem;
         padding: 20px;
         background-color: #e8f4fd;
         border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         text-align: center;
-        margin-bottom: 40px;
     }
 
     .btn-primary {
-        font-size: 1rem;
-        color: #fff;
-        background-color: #4a86e8;
+        display: inline-block;
+        padding: 15px 30px;
         border: none;
         border-radius: 30px;
-        padding: 15px 30px;
+        background-color: #4a86e8;
+        color: #fff;
+        font-size: 1rem;
         font-weight: 600;
-        display: inline-block;
-        transition: box-shadow 0.2s, transform 0.2s;
+        transition:
+            box-shadow 0.2s,
+            transform 0.2s,
+            background-color 0.2s;
     }
 
     .btn-primary:hover {
@@ -86,93 +158,417 @@
     .next-button-container {
         display: flex;
         justify-content: center;
-        margin-top: 24px;
     }
 
     .icon-text {
         margin-right: 0.5rem;
     }
 
-    .stages-header {
-        margin-bottom: 1rem;
+    @media (max-width: 600px) {
+        .experiment-container {
+            margin: 0;
+            padding: 20px;
+            border-radius: 0;
+        }
+
+        .header {
+            margin: -20px -20px 25px;
+            border-radius: 0;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        .game-logic {
+            max-width: 100%;
+            padding: 8px;
+        }
+
+        .game-logic svg {
+            max-width: 100%;
+        }
+
+        .legend {
+            gap: 12px;
+            font-size: 0.78rem;
+        }
+
+        .earnings-formula {
+            font-size: 0.78rem;
+            padding: 7px 10px;
+        }
     }
-
-    .table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-
 </style>
 {% endblock %}
+
+
 {% block content %}
+
 <div class="experiment-container">
+
     <div class="header">
-        <h1><i class="fas fa-users icon-text"></i> {{ C.title }}</h1>
+        <h1>
+            <i class="fas fa-users icon-text"></i>{{ C.title }}
+        </h1>
     </div>
 
     <div class="section introduction">
-        <h2><i class="fas fa-rocket icon-text"></i>Introduction</h2>
+        <h2>
+            <i class="fas fa-rocket icon-text"></i>Introduction
+        </h2>
 
-        <p>Welcome to this game! Thank you for participating. Please read these instructions carefully.
-            You will receive a fixed amount of X euros for your participation, but you can earn more depending
-            on your choices during the game. During the game, points will be used, which will later be converted into euros (X points = 1 euro). At the end of the game, you will be paid as soon as possible.
-            Your final amount will be rounded to the nearest half euro.
-        </p>
+        <ul>
+            <li>You are about to participate in a decision-making game in which you can earn points based on your own and your group members' decisions.</li>
+            <li>You will be grouped with {{ other_players }} other players.</li>
+            <li>Each game consists of {{ rounds }} rounds.</li>
+            <li>You will play two such games, each with a different group, for a total of {{ total_rounds }} rounds.</li>
+            <li>At the end of the experiment, your total earnings will be converted into euros (50 points = €1).</li>
+        </ul>
+
     </div>
 
     <div class="section overview">
-        <h2><i class="fas fa-binoculars icon-text"></i>Game Overview</h2>
-        <p>This is an economic game. The game consists of {{rounds}} rounds. You will play with a group of
-            {{players_per_group}} people, including yourself.
-            Each round you will play with the same players. Your identities will remain anonymous.</p>
 
-        <p>Each game round consists of two phases. In the first phase, you decide how much to contribute to a fund (a common account). In the second phase, you will see an overview of the choices and earnings of all group members.</p>
+        <h2>
+            <i class="fas fa-binoculars icon-text"></i>Game overview
+        </h2>
+
+        <ul>
+            <li>At the beginning of each round, every player receives {{ C.endowment }} points.</li>
+            <li>Each player decides how many points to contribute to the group account (blue arrows in the example below)
+                and how many to keep.</li>
+            <li>All contributions are added together (60 points in the example below).</li>
+            <li>The group account generates returns that are shared equally among all group members.</li>
+        </ul>
+
+        <div class="game-logic">
+
+            <svg viewBox="30 15 740 415"
+                 role="img"
+                 aria-label="Example in which six players receive 20 points and contribute a total of 60 points to the group account.">
+
+                <defs>
+                    <marker id="arrow-blue"
+                            markerWidth="8"
+                            markerHeight="8"
+                            refX="7"
+                            refY="4"
+                            orient="auto">
+                        <path d="M0,0 L8,4 L0,8 Z"
+                              fill="#4a86e8"/>
+                    </marker>
+
+                    <marker id="arrow-green"
+                            markerWidth="8"
+                            markerHeight="8"
+                            refX="7"
+                            refY="4"
+                            orient="auto">
+                        <path d="M0,0 L8,4 L0,8 Z"
+                              fill="#43a56f"/>
+                    </marker>
+                </defs>
+
+                <!-- Figure heading -->
+                <text x="400"
+                      y="35"
+                      text-anchor="middle"
+                      font-family="Montserrat, sans-serif"
+                      font-size="20"
+                      font-weight="600"
+                      fill="#2c3e50">
+                    Example round
+                </text>
+
+                <!-- Returns from the group account -->
+                <g stroke="#43a56f"
+                   stroke-width="2.5"
+                   stroke-dasharray="6 5"
+                   fill="none"
+                   marker-end="url(#arrow-green)"
+                   opacity="0.85">
+
+                    <path d="M330 175 Q230 45 130 60"/>
+                    <path d="M315 220 Q225 195 130 210"/>
+                    <path d="M330 285 Q230 415 130 400"/>
+
+                    <path d="M470 175 Q570 45 670 60"/>
+                    <path d="M485 220 Q575 195 670 210"/>
+                    <path d="M470 285 Q570 415 670 400"/>
+                </g>
+
+                <!-- Group account -->
+                <rect x="310"
+                      y="160"
+                      width="180"
+                      height="140"
+                      rx="18"
+                      fill="#e8f4fd"
+                      stroke="#2c3e50"
+                      stroke-width="3"/>
+
+                <text x="400"
+                      y="202"
+                      text-anchor="middle"
+                      font-family="Montserrat, sans-serif"
+                      font-size="19"
+                      font-weight="600"
+                      fill="#2c3e50">
+                    Group account
+                </text>
+
+                <line x1="338"
+                      y1="218"
+                      x2="462"
+                      y2="218"
+                      stroke="#b9c8d6"
+                      stroke-width="2"/>
+
+                <text x="400"
+                      y="248"
+                      text-anchor="middle"
+                      font-family="Montserrat, sans-serif"
+                      font-size="16"
+                      fill="#5f6b76">
+                    Total contribution
+                </text>
+
+                <text x="400"
+                      y="280"
+                      text-anchor="middle"
+                      font-family="Montserrat, sans-serif"
+                      font-size="27"
+                      font-weight="700"
+                      fill="#43a56f">
+                    60 points
+                </text>
+
+                <!-- Contribution arrows -->
+                <g stroke="#4a86e8"
+                   stroke-width="3"
+                   fill="none"
+                   marker-end="url(#arrow-blue)">
+
+                    <path d="M130 75 L310 180"/>
+                    <path d="M130 230 L310 230"/>
+                    <path d="M130 385 L310 280"/>
+
+                    <path d="M670 75 L490 180"/>
+                    <path d="M670 230 L490 230"/>
+                    <path d="M670 385 L490 280"/>
+                </g>
+
+                <!-- Contribution labels -->
+                <g font-family="Montserrat, sans-serif"
+                   font-size="16"
+                   font-weight="700"
+                   fill="#2f6fc5"
+                   text-anchor="middle">
+
+                    <text x="250" y="132">+20</text>
+                    <text x="225" y="249">+0</text>
+                    <text x="250" y="338">+15</text>
+
+                    <text x="550" y="132">+5</text>
+                    <text x="575" y="249">+10</text>
+                    <text x="550" y="338">+10</text>
+                </g>
+
+                <!-- Player circles -->
+                <g fill="#ffffff"
+                   stroke="#2c3e50"
+                   stroke-width="3">
+
+                    <circle cx="85" cy="75" r="42"/>
+                    <circle cx="85" cy="230" r="42"/>
+                    <circle cx="85" cy="385" r="42"/>
+
+                    <circle cx="715" cy="75" r="42"/>
+                    <circle cx="715" cy="230" r="42"/>
+                    <circle cx="715" cy="385" r="42"/>
+                </g>
+
+                <!-- Person icons -->
+                <g fill="#2c3e50">
+
+                    <g transform="translate(85 69)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+
+                    <g transform="translate(85 224)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+
+                    <g transform="translate(85 379)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+
+                    <g transform="translate(715 69)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+
+                    <g transform="translate(715 224)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+
+                    <g transform="translate(715 379)">
+                        <circle cy="-11" r="9"/>
+                        <path d="M-17 21 Q-15 2 0 2 Q15 2 17 21 Z"/>
+                    </g>
+                </g>
+
+                <!-- Endowment labels -->
+                <g font-family="Montserrat, sans-serif"
+                   font-size="10.5"
+                   font-weight="700"
+                   text-anchor="middle">
+
+                    <g>
+                        <rect x="61"
+                              y="91"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="85" y="106" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                    <g>
+                        <rect x="61"
+                              y="246"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="85" y="261" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                    <g>
+                        <rect x="61"
+                              y="401"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="85" y="416" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                    <g>
+                        <rect x="691"
+                              y="91"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="715" y="106" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                    <g>
+                        <rect x="691"
+                              y="246"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="715" y="261" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                    <g>
+                        <rect x="691"
+                              y="401"
+                              width="48"
+                              height="22"
+                              rx="7"
+                              fill="#fff4cc"
+                              stroke="#d6a928"
+                              stroke-width="1.5"/>
+                        <text x="715" y="416" fill="#725b12">
+                            20 pts
+                        </text>
+                    </g>
+
+                </g>
+
+            </svg>
+
+            <div class="legend">
+
+                <span class="legend-item">
+                    <span class="legend-line contribution-line"></span>
+                    Points contributed
+                </span>
+
+                <span class="legend-item">
+                    <span class="legend-line return-line"></span>
+                    Return from group account
+                </span>
+
+            </div>
+
+            <div class="earnings-formula">
+                <strong>Round earnings</strong>
+                <span class="equals">=</span>
+                <span>points kept</span>
+                <span class="plus">+</span>
+                <span>return from group account</span>
+            </div>
+
+        </div>
+
     </div>
+    <div class="section nextup">
+        <h2><i class="fas fa-forward"></i>Next up</h2>
 
-    <div class="section stages">
-       <h2 class="stages-header"><i class="fas fa-tasks icon-text"></i>Phases per Game Round</h2>
-        <ol>
-            <li>
-                <strong>Phase 1:</strong> <i>Contributing to the Fund</i>
-                <p>At the beginning of each round, your group members and you each receive {{ C.endowment }} points. You decide how many of these points you want to contribute to a fund, whose proceeds are distributed among all group members.
-                    The remaining points you keep for yourself.</p>
+        <ul>
+            <li>On the next pages, we will explain how the group account generates returns in both games.</li>
+            <li>You will indicate how many points you personally consider appropriate to contribute in each game.</li>
+            <li>After answering these questions, you will wait for the other players.</li>
+            <li>Once everyone is ready, the first game will begin.</li>
+        </ul>
 
-                <p>For each point contributed to the fund, everyone receives {{C.efficiency_factor}} points, regardless of their own contribution. For each point that players keep for themselves, only they receive 1 point.</p>
-
-                <p>The earnings of you and your fellow players per round are therefore:</p>
-
-                <p style="text-align: center; font-style: italic; font-weight: bold;">
-                    1 x (20 - own contribution to the fund) + {{ C.efficiency_factor }} x (group contribution to the fund)
-                </p>
-
-                 <p>The players' earnings are thus maximized when everyone contributes the full amount of {{C.endowment}} points to the fund.</p>
-
-            </li>
-            <li>
-
-                <strong>Phase 2:</strong> <i>Group Overview</i>
-                <p>After all group members have decided how much to contribute to the fund,
-                    you will see the choices and earnings of your group members, and they will see yours.</p>
-            </li>
-        </ol>
-
-
-    <div class="section introduction">
-        <h2 class="stages-header"><i class="fas fa-clock"></i> Time per Round</h2>
-        <p>In each round, you will have X seconds to enter your contribution to the fund, followed by X seconds to view the group's choices and earnings.
-            So pay close attention! If you do not act within this time, the game will end for you!</p>
-    </div>
+        </div>
 
     <div class="encouragement">
-        <p>If you have carefully read the instructions, you can start the game by clicking 'Next'.</p>
-        <!--<p><i class="fas fa-heart icon-text"></i>Your role in the game is ...</p>-->
+
+        <p>
+            Once you have read the instructions carefully, you can proceed by
+            clicking on 'Next'.
+        </p>
+
         <div class="next-button-container">
-            <button class="btn-primary">Next</button>
+            <button type="submit" class="btn-primary">
+                Next
+            </button>
         </div>
+
     </div>
+
 </div>
 
-{% endblock content %}
-
+{% endblock %}

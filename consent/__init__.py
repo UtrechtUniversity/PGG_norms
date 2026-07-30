@@ -8,7 +8,7 @@ Constent form
 """
 
 class Constants(BaseConstants):
-    title = "Public goods game"
+    title = "Group decision-making study"
     name_in_url = 'consent'
     players_per_group = None
     num_rounds = 1

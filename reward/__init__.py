@@ -26,9 +26,9 @@ class Player(BasePlayer):
 class PaymentInfo(Page):
     form_model = 'player'
 
-    def is_displayed(player):
-        participant = player.participant
-        return participant.consent == True
+    #def is_displayed(player):
+    #    participant = player.participant
+    #    return participant.consent == True
 
     @staticmethod
     def js_vars(player):
