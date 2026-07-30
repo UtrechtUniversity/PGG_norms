@@ -36,19 +36,28 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="text-center my-4">
-        <h1><i class="far fa-edit"></i> Personal Normative Beliefs</h1>
-    </div>
+        <h2>
+            <i class="fas fa-users icon-text"></i> Game {{elicitation_number}}
+        </h2>
 
-   <p class="page-intro">
-    Down below you see an example of a {{players_per_group}}-player group. You can change each player's contribution decision
-    to the public fund using the sliders and see how this affects their own and others' payoffs.
-    Play around with the sliders to explore the effects of different contribution decisions!
-</p>
+    <p class="page-intro">
+        In the
+        {% if elicitation_number == 1 %}
+            first
+        {% else %}
+            second
+        {% endif %}
+        game, every point contributed to the group account generates a return of
+        <strong>{{ efficiency_factor }} points</strong> for each
+        group member.
+    </p>
 
-<p class="page-intro">
-    Please answer the question below.
-</p>
+    <p class="page-intro">
+        Below you see an example of a {{ players_per_group }}-player group. You can
+        change each player's contribution to the group account using the sliders and
+        see how this affects their own and the other group members' payoffs in this game.
+        Please answer the question below.
+    </p>
 
     <div class="card mt-4 shadow">
         <h2 class="card-header">Example game</h2>

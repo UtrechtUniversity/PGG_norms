@@ -13,6 +13,9 @@ def simulated_pnb(player, offset=0):
 class PlayerBot(Bot):
 
     def play_round(self):
+
+        yield IntroductionPage
+
         linear_pnb = simulated_pnb(self.player)
         stepwise_pnb = simulated_pnb(self.player, offset=7)
 

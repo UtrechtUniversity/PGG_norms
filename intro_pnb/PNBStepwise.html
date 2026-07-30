@@ -143,24 +143,18 @@
 {% block content %}
 
 <div class="container mt-5">
-
-    <div class="text-center my-4">
-        <h1>
-            <i class="far fa-edit"></i>
-            Personal Normative Beliefs
-        </h1>
-    </div>
+     <h2>
+            <i class="fas fa-users icon-text"></i> Game {{elicitation_number}}
+        </h2>
 
     <p class="page-intro">
-        Below you see an example of a
-        {{ players_per_group }}-player game.
-        You can change each player's contribution to the group account
-        using the sliders and see how this affects their own and the
-        other group members' payoffs.
-    </p>
-
-    <p class="page-intro">
-        If the group contributes at least
+        In the
+        {% if elicitation_number == 1 %}
+            first
+        {% else %}
+            second
+        {% endif %}
+        game, if the group contributes at least
         <strong>{{ threshold }}</strong> points in total, every group
         member receives a reward of <strong>{{ reward }}</strong>
         points. If the threshold is not reached, no group member
@@ -168,9 +162,12 @@
     </p>
 
     <p class="page-intro">
-        Play around with the sliders to explore the effects of different
-        contribution decisions. Then answer the question below.
+        Below you see an example of a {{ players_per_group }}-player group. You can
+        change each player's contribution to the group account using the sliders and
+        see how this affects their own and the other group members' payoffs in this game.
+        Please answer the question below.
     </p>
+
 
     <div class="card mt-4 shadow">
 
@@ -187,8 +184,8 @@
                 <thead>
                     <tr>
                         <th style="width: 20%;">Player</th>
-                        <th style="width: 30%;">Public contribution</th>
-                        <th style="width: 25%;">Private account</th>
+                        <th style="width: 30%;">Public Contribution</th>
+                        <th style="width: 25%;">Private Contribution</th>
                         <th style="width: 25%;">Payoff</th>
                     </tr>
                 </thead>

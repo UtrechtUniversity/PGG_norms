@@ -14,9 +14,13 @@ Repeated groupmate pairs from game 1 are minimized
 
 
 from settings import (
+    number_of_players as np,
     players_per_group as ppp,
-    efficiency_factor as ef,
+    endowment as e,
     num_rounds as nr,
+    efficiency_factor as ef,
+    threshold as t,
+    reward as r,
 )
 
 
@@ -27,14 +31,14 @@ class Constants(BaseConstants):
 
     num_recent_rounds_to_display = 1
 
-    endowment = 20
+    endowment = e
 
     # Linear game
     efficiency_factor = ef
 
     # Stepwise game
-    threshold = 60
-    reward = 15
+    threshold = t
+    reward = r
 
     # Number of randomly generated valid groups considered
     # when minimizing repeated PGG1 groupmates.
@@ -124,18 +128,12 @@ class Player(BasePlayer):
     )
 
 
-
-
 def creating_session(subsession):
     if subsession.round_number != 1:
         return
 
     session = subsession.session
-
-    number_of_players = len(
-        subsession.get_players()
-    )
-
+    number_of_players = np
     group_size = Constants.players_per_group
 
     if number_of_players % group_size != 0:
@@ -579,7 +577,7 @@ def enough_players_are_waiting(
     )
 
     preferred_waiting_pool = min(
-        3 * Constants.players_per_group,
+        3 * Constants.players_per_group, #wait for 18 players to be ready (3 groups).
         players_remaining,
     )
 
@@ -823,7 +821,7 @@ class IntroductionPage(Page):
                 Constants.efficiency_factor
             ),
             threshold=Constants.threshold,
-            reward=Constants.reward,
+            reward=int(Constants.reward),
         )
 
 class GroupFormationWaitPage(WaitPage):
@@ -836,7 +834,9 @@ class GroupFormationWaitPage(WaitPage):
     title_text = "Please wait"
 
     body_text = (
-        "Waiting to form a group for the second game."
+        "You have completed the first game. "
+        "Please wait while we form your group for the second game. "
+        "This may take a few minutes."
     )
 
     @staticmethod
@@ -970,6 +970,14 @@ class Contribution(Page):
 
 
 class GroupWaitPage(WaitPage):
+
+    title_text = "Please wait"
+
+    body_text = (
+        "Waiting for the other members of your group "
+        "to make their decision."
+    )
+
 
     @staticmethod
     def after_all_players_arrive(group):

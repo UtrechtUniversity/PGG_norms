@@ -6,17 +6,17 @@ SESSION_CONFIGS = [
 # Test
     dict(
         name="test",
-        display_name="test 9",
-        num_demo_participants=9,
+        display_name="test 21-18-3",
+        num_demo_participants=21,
         public_goods_first="linear",
         composition_first="homogeneous",
-        use_browser_bots=False,
+        use_browser_bots=True,
         app_sequence=[
-            # "consent",
             "intro_pnb",
+            "selection",
             "public_goods_game_1",
             "public_goods_game_2",
-            #"reward",
+            "reward",
         ],
         completionlink=(
             "https://app.prolific.com/"
@@ -30,16 +30,15 @@ SESSION_CONFIGS = [
     dict(
         name="pgg_linear_homogeneous_first",
         display_name="Linear first – homogeneous first",
-        num_demo_participants=72,
+        num_demo_participants=90,
         public_goods_first="linear",
         composition_first="homogeneous",
-        use_browser_bots=True,
+        use_browser_bots=False,
         app_sequence=[
-            # "consent",
             "intro_pnb",
             "public_goods_game_1",
             "public_goods_game_2",
-            #"reward",
+            "reward",
         ],
         completionlink=(
             "https://app.prolific.com/"
@@ -53,16 +52,15 @@ SESSION_CONFIGS = [
     dict(
         name="pgg_linear_heterogeneous_first",
         display_name="Linear first – heterogeneous first",
-        num_demo_participants=72,
+        num_demo_participants=90,
         public_goods_first="linear",
         composition_first="heterogeneous",
-        use_browser_bots=True,
+        use_browser_bots=False,
         app_sequence=[
-            # "consent",
             "intro_pnb",
             "public_goods_game_1",
             "public_goods_game_2",
-            #"reward",
+            "reward",
         ],
         completionlink=(
             "https://app.prolific.com/"
@@ -76,16 +74,15 @@ SESSION_CONFIGS = [
     dict(
         name="pgg_stepwise_homogeneous_first",
         display_name="Stepwise first – homogeneous first",
-        num_demo_participants=72,
+        num_demo_participants=90,
         public_goods_first="stepwise",
         composition_first="homogeneous",
-        use_browser_bots=True,
+        use_browser_bots=False,
         app_sequence=[
-            # "consent",
             "intro_pnb",
             "public_goods_game_1",
             "public_goods_game_2",
-            #"reward",
+            "reward",
         ],
         completionlink=(
             "https://app.prolific.com/"
@@ -99,16 +96,15 @@ SESSION_CONFIGS = [
     dict(
         name="pgg_stepwise_heterogeneous_first",
         display_name="Stepwise first – heterogeneous first",
-        num_demo_participants=72,
+        num_demo_participants=90,
         public_goods_first="stepwise",
         composition_first="heterogeneous",
-        use_browser_bots=True,
+        use_browser_bots=False,
         app_sequence=[
-            # "consent",
             "intro_pnb",
             "public_goods_game_1",
             "public_goods_game_2",
-            #"reward",
+            "reward",
         ],
         completionlink=(
             "https://app.prolific.com/"
@@ -118,11 +114,29 @@ SESSION_CONFIGS = [
 ]
 # set some central parameters to be used across apps:
 
-players_per_group = 6
-efficiency_factor = .25
-#threshold = 60
-#reward = 15
-num_rounds = 10
+number_of_players = 18
+players_per_group = 3
+num_rounds = 2
+
+endowment = 20
+group_multiplier = 1.5
+threshold_per_player = 10
+
+# Linear PGG
+efficiency_factor = group_multiplier / players_per_group
+
+# Threshold PGG
+threshold = threshold_per_player * players_per_group
+reward = efficiency_factor * threshold
+
+
+
+
+
+
+
+
+
 
 #configure a room
 ROOMS = [

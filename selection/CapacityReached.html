@@ -1,0 +1,80 @@
+{{ block title }}
+    The session is full
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    @import url(
+        'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap'
+    );
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f7f9fc;
+        color: #424242;
+    }
+
+    .capacity-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .capacity-box {
+        padding: 28px 32px;
+        border: 1px solid #dce3eb;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .capacity-box p {
+        margin-bottom: 16px;
+        line-height: 1.7;
+    }
+
+    .capacity-box p:last-child {
+        margin-bottom: 0;
+    }
+
+    .button-container {
+        margin-top: 28px;
+        text-align: right;
+    }
+</style>
+
+<div class="capacity-container">
+
+    <div class="capacity-box">
+
+        <p>
+            Thank you for waiting.
+        </p>
+
+        <p>
+            The required number of participants has now joined
+            the experiment. Therefore, you will not take part in
+            the decision-making games.
+        </p>
+
+        <p>
+            Please click <strong>Continue</strong> to complete
+            the study and register your participation. You will
+            receive the compensation stated in the study
+            description.
+        </p>
+
+    </div>
+
+    <div class="button-container">
+        <button
+            class="otree-btn-next btn btn-primary"
+            type="submit"
+        >
+            Continue
+        </button>
+    </div>
+
+</div>
+
+{{ endblock }}
