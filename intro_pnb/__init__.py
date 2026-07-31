@@ -17,6 +17,8 @@ from settings import (
     efficiency_factor as ef,
     threshold as t,
     reward as r,
+    contribution_time as ct,
+    observation_time as ot,
 )
 
 class C(BaseConstants):
@@ -185,7 +187,7 @@ class PNBStepwiseFirst(Page):
         return dict(
             endowment=C.endowment,
             threshold=C.threshold,
-            reward=C.reward,
+            reward=int(C.reward),
             players_per_group=ppp,
             game_type="stepwise",
             elicitation_number=1,
@@ -259,7 +261,7 @@ class PNBStepwiseSecond(Page):
         return dict(
             endowment=C.endowment,
             threshold=C.threshold,
-            reward=C.reward,
+            reward=int(C.reward),
             players_per_group=ppp,
             game_type="stepwise",
             elicitation_number=2,
@@ -282,7 +284,7 @@ class PNBStepwiseSecond(Page):
 
 
 page_sequence = [
-     IntroductionPage,
+     #IntroductionPage,
 
     # Exactly one of these two pages is displayed.
     PNBLinearFirst,

@@ -16,7 +16,6 @@
     }
 
 
-
     .form-container {
         position: relative;
         margin-top: 40px;
@@ -129,11 +128,140 @@
         user-select: none;
         text-align: start;
     }
+
+    .instruction-help {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        z-index: 20;
+    }
+
+    .instruction-help-button {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: #2980b9;
+        color: #fff;
+        font-size: 1.25rem;
+        cursor: help;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .instruction-help-button:hover,
+    .instruction-help-button:focus {
+        background-color: #1a5276;
+        outline: none;
+    }
+
+    .instruction-tooltip {
+        position: absolute;
+        top: 46px;
+        right: 0;
+        width: min(430px, calc(100vw - 60px));
+        padding: 1rem 1.15rem;
+        border: 1px solid #d5d8dc;
+        border-radius: 8px;
+        background-color: #fff;
+        color: #4a4a4a;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        text-align: left;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-5px);
+        pointer-events: none;
+
+        transition:
+            opacity 0.2s ease,
+            transform 0.2s ease,
+            visibility 0.2s ease;
+    }
+
+    .instruction-tooltip::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        right: 11px;
+        width: 14px;
+        height: 14px;
+        background-color: #fff;
+        border-top: 1px solid #d5d8dc;
+        border-left: 1px solid #d5d8dc;
+        transform: rotate(45deg);
+    }
+
+    .instruction-help:hover .instruction-tooltip,
+    .instruction-help:focus-within .instruction-tooltip {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .instruction-tooltip-title {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .game-rule {
+        margin: 0;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
+
+    <div class="instruction-help">
+
+    <button
+        type="button"
+        class="instruction-help-button"
+        aria-label="Show game rules"
+        aria-describedby="game-rule-tooltip"
+    >
+        <i class="fas fa-question"></i>
+    </button>
+
+    <div
+        id="game-rule-tooltip"
+        class="instruction-tooltip"
+        role="tooltip"
+    >
+        {% if regime == "linear" %}
+
+            <p class="game-rule">
+                You receive <strong>1 point</strong> for every
+                point you keep in your private account. In
+                addition, every group member receives
+                <strong>{{ efficiency_factor }} points</strong>
+                for each point contributed to the group account,
+                regardless of who made the contribution.
+            </p>
+
+        {% elif regime == "stepwise" %}
+
+            <p class="game-rule">
+                You receive <strong>1 point</strong> for every
+                point you keep in your private account. If your
+                group contributes at least
+                <strong>{{ threshold }} points</strong> to the
+                group account in total, every group member
+                receives
+                <strong>{{ reward }} additional points</strong>.
+            </p>
+
+        {% endif %}
+    </div>
+
+</div>
+
     <h1 class="card-title text-center" style="margin-bottom: 30px;"><i class="far fa-edit mr-2"></i>Contribute to the group account
     </h1>
     <!--

@@ -19,7 +19,21 @@ from settings import (
     efficiency_factor as ef,
     threshold as t,
     reward as r,
+    contribution_time as ct,
+    observation_time as ot,
+    introduction_time as it,
 )
+
+from pgg_functions import (
+    set_payoffs as calculate_pgg_payoffs,
+    handle_contribution_timeout,
+    get_regime,
+    get_composition,
+    get_tier_variable,
+    get_pnb_variable,
+    get_injunctive_feedback,
+)
+
 
 class Constants(BaseConstants):
     name_in_url = "public_goods_game_1"
@@ -59,49 +73,7 @@ class Group(BaseGroup):
     composition = models.StringField()
 
     def set_payoffs(self):
-        players = self.get_players()
-
-        self.total_group_investment = sum(
-            p.public_investment
-            for p in players
-        )
-
-        for p in players:
-            p.payoff_from_private = (
-                Constants.endowment
-                - p.public_investment
-            )
-
-            if self.regime == "linear":
-                p.payoff_from_public = (
-                    Constants.efficiency_factor
-                    * self.total_group_investment
-                )
-
-            elif self.regime == "stepwise":
-                threshold_met = (
-                    self.total_group_investment
-                    >= Constants.threshold
-                )
-
-                if threshold_met:
-                    p.payoff_from_public = (
-                        Constants.reward
-                    )
-                else:
-                    p.payoff_from_public = 0
-
-            else:
-                raise ValueError(
-                    f"Unknown regime: {self.regime}"
-                )
-
-            p.gross_profit = (
-                p.payoff_from_private
-                + p.payoff_from_public
-            )
-
-            p.payoff = p.gross_profit
+        calculate_pgg_payoffs(self)
 
 
 class Player(BasePlayer):
@@ -122,86 +94,16 @@ class Player(BasePlayer):
         ),
     )
 
+    contribution_timed_out = models.BooleanField(
+        initial=False
+    )
+
 def creating_session(subsession):
     if subsession.round_number == 1:
         subsession.session.vars[
             "game_1_groups_planned"
         ] = False
 
-
-def get_regime(session):
-    """
-    Return the game played in public_goods_game_1.
-    """
-
-    regime = session.config[
-        "public_goods_first"
-    ]
-
-    if regime not in [
-        "linear",
-        "stepwise",
-    ]:
-        raise ValueError(
-            "public_goods_first must be "
-            "'linear' or 'stepwise'."
-        )
-
-    return regime
-
-
-def get_composition(session):
-    """
-    Return the composition condition used in
-    public_goods_game_1.
-    """
-
-    composition = session.config[
-        "composition_first"
-    ]
-
-    if composition not in [
-        "homogeneous",
-        "heterogeneous",
-    ]:
-        raise ValueError(
-            "composition_first must be "
-            "'homogeneous' or 'heterogeneous'."
-        )
-
-    return composition
-
-
-def get_tier_variable(regime):
-    """
-    Return the PNB tier belonging to the current game.
-    """
-
-    if regime == "linear":
-        return "pnb_tier_linear"
-
-    if regime == "stepwise":
-        return "pnb_tier_stepwise"
-
-    raise ValueError(
-        f"Unknown regime: {regime}"
-    )
-
-
-def get_pnb_variable(regime):
-    """
-    Return the PNB score belonging to the current game.
-    """
-
-    if regime == "linear":
-        return "pnb_linear"
-
-    if regime == "stepwise":
-        return "pnb_stepwise"
-
-    raise ValueError(
-        f"Unknown regime: {regime}"
-    )
 
 
 def create_homogeneous_groups(
@@ -211,8 +113,6 @@ def create_homogeneous_groups(
     """
     Create homogeneous groups by randomly assigning
     participants within their low, middle, or high PNB tier.
-
-
     """
 
     group_size = Constants.players_per_group
@@ -522,8 +422,8 @@ def plan_game_1_groups(
             f"participants, but received {len(players)}."
         )
 
-    regime = get_regime(session)
-    composition = get_composition(session)
+    regime = get_regime(session, game_number=1)
+    composition = get_composition(session, game_number=1)
 
     tier_variable = get_tier_variable(
         regime
@@ -740,8 +640,8 @@ def initialize_game_1_group(group):
     players = group.get_players()
     session = group.subsession.session
 
-    regime = get_regime(session)
-    composition = get_composition(session)
+    regime = get_regime(session, game_number=1)
+    composition = get_composition(session, game_number=1)
 
     planned_group_numbers = {
         player.participant.vars.get(
@@ -820,7 +720,7 @@ def initialize_game_1_group(group):
 # ============================================================
 
 class IntroductionPage(Page):
-    timeout_seconds = 600
+    timeout_seconds = it
     timer_text = "Time remaining:"
 
     @staticmethod
@@ -873,16 +773,30 @@ class Contribution(Page):
     form_model = "player"
     form_fields = ["public_investment"]
 
+    timeout_seconds = ct
+
+    @staticmethod
+    def before_next_page(
+            player,
+            timeout_happened,
+    ):
+        handle_contribution_timeout(
+            player=player,
+            timeout_happened=timeout_happened,
+        )
+
     @staticmethod
     def vars_for_template(player):
         return dict(
             round_number=player.round_number,
             num_rounds=Constants.num_rounds,
             endowment=Constants.endowment,
+            efficiency_factor=Constants.efficiency_factor,
+            threshold=Constants.threshold,
+            reward=int(Constants.reward),
             regime=player.group.regime,
             composition=player.group.composition,
         )
-
 
 class GroupWaitPage(WaitPage):
 
@@ -899,6 +813,8 @@ class GroupWaitPage(WaitPage):
 
 
 class ObservationPage(Page):
+
+    timeout_seconds = ot
 
     @staticmethod
     def vars_for_template(player):
@@ -933,15 +849,14 @@ class ObservationPage(Page):
 
         for group_player in players:
             if group.show_feedback:
-                evaluation = (
-                    "approved"
-                    if group_player.public_investment
-                    >= average_public
-                    else "disapproved"
+                injunctive_feedback = (
+                    get_injunctive_feedback(
+                        regime=group.regime,
+                        contribution=group_player.public_investment,
+                    )
                 )
-
             else:
-                evaluation = None
+                injunctive_feedback = None
 
             round_data.append(
                 dict(
@@ -954,7 +869,18 @@ class ObservationPage(Page):
                     total=(
                         group_player.gross_profit
                     ),
-                    evaluation=evaluation,
+                    evaluation=(
+                        injunctive_feedback[
+                            "evaluation"
+                        ]
+                        if injunctive_feedback
+                        else None
+                    ),
+                    evaluation_message=(
+                        injunctive_feedback["message"]
+                        if injunctive_feedback
+                        else None
+                    ),
                 )
             )
 

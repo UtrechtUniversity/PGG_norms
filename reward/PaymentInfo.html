@@ -1,9 +1,186 @@
-{% block scripts %}
-<script>
-    let completionlink = js_vars.completionlink;
+{% extends "global/Page.html" %}
+{% load otree static %}
 
-    window.onload = function(){
-        window.location.href = completionlink;
+
+{% block content %}
+
+<style>
+    .payment-card {
+        max-width: 680px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
-</script>
+
+    .payment-card h2 {
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .payment-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .payment-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .payment-label {
+        color: #555;
+        font-weight: 600;
+    }
+
+    .payment-value {
+        color: #2c3e50;
+        font-size: 1.15rem;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .total-row {
+        margin-top: 0.75rem;
+        padding: 1rem;
+        background-color: #eafaf1;
+        border: 2px solid #27ae60;
+        border-radius: 8px;
+    }
+
+    .total-row .payment-label {
+        color: #1e8449;
+        font-size: 1.1rem;
+    }
+
+    .total-row .payment-value {
+        color: #1e8449;
+        font-size: 1.35rem;
+    }
+
+    .payment-note {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background-color: #f7f7f7;
+        border-left: 4px solid #2980b9;
+        border-radius: 4px;
+        color: #555;
+        font-size: 0.92rem;
+        line-height: 1.5;
+    }
+
+    .prolific-button-container {
+        margin-top: 1.75rem;
+        text-align: center;
+    }
+
+    .prolific-button {
+        display: inline-block;
+        padding: 0.8rem 2.5rem;
+        background-color: #2980b9;
+        color: #fff;
+        border-radius: 22px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .prolific-button:hover {
+        background-color: #2471a3;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .payment-card {
+            padding: 1.25rem;
+        }
+
+        .payment-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .payment-value {
+            text-align: left;
+        }
+    }
+</style>
+
+
+<div class="payment-card">
+
+    <h2>Game earnings</h2>
+
+    <div class="payment-row">
+        <span class="payment-label">
+            Points earned
+        </span>
+
+        <span class="payment-value">
+            {{ payable_points }}
+        </span>
+    </div>
+
+    <div class="payment-row">
+        <span class="payment-label">
+            Conversion rate
+        </span>
+
+        <span class="payment-value">
+            1 point = {{ conversion_per_point }}
+        </span>
+    </div>
+
+    <div class="payment-row">
+        <span class="payment-label">
+            Base payment
+        </span>
+
+        <span class="payment-value">
+            {{ base_payment }}
+        </span>
+    </div>
+
+    <div class="payment-row">
+        <span class="payment-label">
+            Bonus
+        </span>
+
+        <span class="payment-value">
+            {{ bonus_payment }}
+        </span>
+    </div>
+
+    <div class="payment-row total-row">
+        <span class="payment-label">
+            Total payment
+        </span>
+
+        <span class="payment-value">
+            {{ total_payment }}
+        </span>
+    </div>
+
+    <div class="payment-note">
+        Only rounds in which you submitted your contribution
+        before the decision time expired are included in earned points.
+    </div>
+
+    <div class="prolific-button-container">
+        <a
+            class="prolific-button"
+            href="{{ completionlink }}"
+        >
+            Complete the study on Prolific
+        </a>
+    </div>
+
+</div>
+
 {% endblock %}

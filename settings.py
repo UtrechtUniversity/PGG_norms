@@ -7,10 +7,10 @@ SESSION_CONFIGS = [
     dict(
         name="test",
         display_name="test 21-18-3",
-        num_demo_participants=21,
+        num_demo_participants=18, #21,
         public_goods_first="linear",
         composition_first="homogeneous",
-        use_browser_bots=True,
+        use_browser_bots=False,
         app_sequence=[
             "intro_pnb",
             "selection",
@@ -129,13 +129,9 @@ efficiency_factor = group_multiplier / players_per_group
 threshold = threshold_per_player * players_per_group
 reward = efficiency_factor * threshold
 
-
-
-
-
-
-
-
+contribution_time = 90 #time out for contribution
+observation_time = 60 #time out for observation
+introduction_time = 300 #time out for instruction of production function after being grouped
 
 
 #configure a room
@@ -147,7 +143,7 @@ ROOMS = [
 ]
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=0.10, participation_fee=2.00, doc=""
 )
 
 PARTICIPANT_FIELDS = ['consent']
@@ -158,7 +154,7 @@ SESSION_FIELDS = []
 LANGUAGE_CODE = 'en'
 
 # e.g. EUR, GBP, CNY, JPY
-REAL_WORLD_CURRENCY_CODE = 'USD'
+REAL_WORLD_CURRENCY_CODE = 'GBP'
 USE_POINTS = True
 
 ADMIN_USERNAME = 'admin'

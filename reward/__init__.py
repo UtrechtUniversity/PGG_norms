@@ -2,6 +2,7 @@ from otree.api import *
 
 
 doc = """
+show the participants points and earnings
 Redirect to Prolific
 """
 
@@ -24,18 +25,48 @@ class Player(BasePlayer):
 
 # PAGES
 class PaymentInfo(Page):
-    form_model = 'player'
-
-    #def is_displayed(player):
-    #    participant = player.participant
-    #    return participant.consent == True
 
     @staticmethod
-    def js_vars(player):
-        return dict(
-            completionlink=
-              player.subsession.session.config['completionlink']
+    def vars_for_template(player):
+        participant = player.participant
+        session = player.subsession.session
+
+        payable_points = participant.payoff
+
+        points_value = (
+            payable_points.to_real_world_currency(
+                session
+            )
         )
-    pass
+
+        base_payment = session.config[
+            "participation_fee"
+        ]
+
+        total_payment = max(
+            points_value,
+            base_payment,
+        )
+
+        bonus_payment = (
+            total_payment
+            - base_payment
+        )
+
+        return dict(
+            payable_points=payable_points,
+            conversion_per_point=(
+                cu(1).to_real_world_currency(
+                    session
+                )
+            ),
+            base_payment=base_payment,
+            bonus_payment=bonus_payment,
+            total_payment=total_payment,
+            completionlink=session.config[
+                "completionlink"
+            ],
+        )
 
 page_sequence = [PaymentInfo]
+
