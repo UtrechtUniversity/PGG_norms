@@ -7,7 +7,7 @@ SESSION_CONFIGS = [
     dict(
         name="test",
         display_name="test 21-18-3",
-        num_demo_participants=18, #21,
+        num_demo_participants=21, #space for 21 (signed-up) participants; the first 18 will continue to the games
         public_goods_first="linear",
         composition_first="homogeneous",
         use_browser_bots=False,
@@ -18,10 +18,16 @@ SESSION_CONFIGS = [
             "public_goods_game_2",
             "reward",
         ],
-        completionlink=(
+
+        completionlink_included=(
             "https://app.prolific.com/"
-            "submissions/complete?cc=TEST"
+            "submissions/complete?cc=INCLUDED"
         ),
+
+        completionlink_excluded=(
+                    "https://app.prolific.com/"
+                    "submissions/complete?cc=EXCLUDED"
+                ),
     ),
 
     # Arm A:
@@ -36,13 +42,19 @@ SESSION_CONFIGS = [
         use_browser_bots=False,
         app_sequence=[
             "intro_pnb",
+            "selection",
             "public_goods_game_1",
             "public_goods_game_2",
             "reward",
         ],
-        completionlink=(
+        completionlink_included=(
             "https://app.prolific.com/"
-            "submissions/complete?cc=TEST"
+            "submissions/complete?cc=INCLUDED"
+        ),
+
+        completionlink_excluded=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=EXCLUDED"
         ),
     ),
 
@@ -58,13 +70,19 @@ SESSION_CONFIGS = [
         use_browser_bots=False,
         app_sequence=[
             "intro_pnb",
+            "selection",
             "public_goods_game_1",
             "public_goods_game_2",
             "reward",
         ],
-        completionlink=(
+        completionlink_included=(
             "https://app.prolific.com/"
-            "submissions/complete?cc=TEST"
+            "submissions/complete?cc=INCLUDED"
+        ),
+
+        completionlink_excluded=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=EXCLUDED"
         ),
     ),
 
@@ -80,13 +98,19 @@ SESSION_CONFIGS = [
         use_browser_bots=False,
         app_sequence=[
             "intro_pnb",
+            "selection",
             "public_goods_game_1",
             "public_goods_game_2",
             "reward",
         ],
-        completionlink=(
+        completionlink_included=(
             "https://app.prolific.com/"
-            "submissions/complete?cc=TEST"
+            "submissions/complete?cc=INCLUDED"
+        ),
+
+        completionlink_excluded=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=EXCLUDED"
         ),
     ),
 
@@ -102,13 +126,19 @@ SESSION_CONFIGS = [
         use_browser_bots=False,
         app_sequence=[
             "intro_pnb",
+            "selection",
             "public_goods_game_1",
             "public_goods_game_2",
             "reward",
         ],
-        completionlink=(
+        completionlink_included=(
             "https://app.prolific.com/"
-            "submissions/complete?cc=TEST"
+            "submissions/complete?cc=INCLUDED"
+        ),
+
+        completionlink_excluded=(
+            "https://app.prolific.com/"
+            "submissions/complete?cc=EXCLUDED"
         ),
     ),
 ]

@@ -171,6 +171,13 @@
 
 
 {% block content %}
+
+<audio
+    id="ping-sound"
+    src="{% static 'sounds/ping.mp3' %}"
+    preload="auto"
+></audio>
+
 <div class="container mt-5">
 
     <div class="text-center my-4">
@@ -412,4 +419,24 @@
     </div>
 
 </div>
+
+<script>
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            const ping =
+                document.getElementById("ping-sound");
+
+            ping.volume = 0.7;
+
+            ping.play().catch(function (error) {
+                console.log(
+                    "Audio playback blocked:",
+                    error
+                );
+            });
+        }
+    );
+</script>
+
 {% endblock %}

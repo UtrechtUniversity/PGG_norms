@@ -385,20 +385,12 @@ class CapacityReached(Page):
         return not player.selected_for_game
 
     @staticmethod
-    def app_after_this_page(
-        player,
-        upcoming_apps,
-    ):
-        """
-        Skip the public-goods-game apps and redirect the
-        participant to the final app in the app sequence.
-
-        The final app should therefore be the app containing
-        the Prolific completion/payment page.
-        """
-
-        if upcoming_apps:
-            return upcoming_apps[-1]
+    def vars_for_template(player):
+        return dict(
+            completionlink=player.session.config[
+                "completionlink_excluded"
+            ],
+        )
 
 
 page_sequence = [

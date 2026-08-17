@@ -64,7 +64,7 @@ class PaymentInfo(Page):
             bonus_payment=bonus_payment,
             total_payment=total_payment,
             completionlink=session.config[
-                "completionlink"
+                "completionlink_included"
             ],
         )
 

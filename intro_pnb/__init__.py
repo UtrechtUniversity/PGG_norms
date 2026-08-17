@@ -284,7 +284,7 @@ class PNBStepwiseSecond(Page):
 
 
 page_sequence = [
-     #IntroductionPage,
+     IntroductionPage,
 
     # Exactly one of these two pages is displayed.
     PNBLinearFirst,
